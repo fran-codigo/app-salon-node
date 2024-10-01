@@ -49,7 +49,7 @@ const register = async (req, res) => {
     });
 
     res.json({
-      msg: 'El ususario se creo correctamente, revisa tu email',
+      msg: 'El usuario se creo correctamente, revisa tu email',
     });
   } catch (error) {
     console.log(error);
