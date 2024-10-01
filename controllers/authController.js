@@ -85,16 +85,22 @@ const login = async (req, res) => {
     const error = new Error('El usuario no existe');
     return res.status(401).json({ msg: error.message });
   }
-  
+
   // Revisar que el usuario confirme su cuenta
-  if(!user.verified) {
+  if (!user.verified) {
     const error = new Error('Tu cuenta no ha sido confirmada aun');
     return res.status(401).json({ msg: error.message });
   }
 
   // Comprobar password
-  
-  
+  if (await user.checkPassword(password)) {
+    res.json({
+      msg: 'Usuario Autenticado',
+    });
+  } else {
+    const error = new Error('La contraseña es incorrecta');
+    return res.status(401).json({ msg: error.message });
+  }
 };
 
 export { register, verifyAccount, login };
