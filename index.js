@@ -6,6 +6,7 @@ import { db } from './config/db.js';
 import servicesRoutes from './routes/services.routes.js';
 import authRoutes from './routes/auth.routes.js';
 import appointmentRoutes from './routes/appointment.routes.js';
+import userRoutes from './routes/user.routes.js';
 
 // Variables de entorno
 dotenv.config();
@@ -41,6 +42,7 @@ server.use(cors(corsOptions));
 server.use('/api/services', servicesRoutes);
 server.use('/api/auth', authRoutes);
 server.use('/api/appointments', appointmentRoutes);
+server.use('/api/users', userRoutes);
 
 // Definir puerto
 const PORT = process.env.PORT || 4000;
