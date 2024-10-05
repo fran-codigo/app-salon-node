@@ -5,7 +5,7 @@ import cors from 'cors';
 import { db } from './config/db.js';
 import servicesRoutes from './routes/services.routes.js';
 import authRoutes from './routes/auth.routes.js';
-import appointmentRoutes from './routes/auth.routes.js';
+import appointmentRoutes from './routes/appointment.routes.js';
 
 // Variables de entorno
 dotenv.config();
