@@ -1,6 +1,15 @@
 import Appointment from '../models/Appointment.js';
 import { parse, formatISO, startOfDay, endOfDay, isValid } from 'date-fns';
-import { validateObjectId, handleNotFoundError } from '../utils/index.js';
+import {
+  validateObjectId,
+  handleNotFoundError,
+  formatDate,
+} from '../utils/index.js';
+import {
+  sendEmailCancelAppointment,
+  sendEmailNewAppointment,
+  sendEmailUpdateAppointment,
+} from '../emails/appointmentEmailService.js';
 
 const createAppointment = async (req, res) => {
   const appointment = req.body;
@@ -8,7 +17,12 @@ const createAppointment = async (req, res) => {
 
   try {
     const newAppointment = new Appointment(appointment);
-    await newAppointment.save();
+    const result = await newAppointment.save();
+
+    await sendEmailNewAppointment({
+      date: formatDate(result.date),
+      time: result.time,
+    });
 
     res.json({
       msg: 'Tu Reservación se realizó de forma correcta',
@@ -87,6 +101,11 @@ const updateAppointment = async (req, res) => {
 
   try {
     const result = await appointment.save();
+
+    await sendEmailUpdateAppointment({
+      date: formatDate(result.date),
+      time: result.time,
+    });
     res.json({
       msg: 'Cita Actualizada correctamente',
     });
@@ -114,12 +133,16 @@ const deleteAppointment = async (req, res) => {
   }
 
   try {
-    await appointment.deleteOne()
+    await appointment.deleteOne();
 
-    res.json({msg: 'Cita cancelada correctamente'})
+    await sendEmailCancelAppointment({
+      date: formatDate(appointment.date),
+      time: appointment.time,
+    });
+
+    res.json({ msg: 'Cita cancelada correctamente' });
   } catch (error) {
     console.log(error);
-    
   }
 };
 
