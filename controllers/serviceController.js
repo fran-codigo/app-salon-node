@@ -84,7 +84,7 @@ const deleteService = async (req, res) => {
   }
 
   try {
-    await Service.deleteOne();
+    await service.deleteOne();
     res.json({
       msg: 'El servicio se elimino correctamente',
     });
