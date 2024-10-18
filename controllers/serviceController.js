@@ -22,9 +22,23 @@ const createService = async (req, res) => {
 };
 
 const getServices = async (req, res) => {
+  const { page = 1, limit = 6 } = req.query;
+
   try {
-    const services = await Service.find();
-    res.json(services);
+    const totalServices = await Service.countDocuments();
+    const totalPages = Math.ceil(totalServices / limit);
+
+    const services = await Service.find()
+      .limit(limit * 1)
+      .skip((page - 1) * limit)
+      .exec();
+
+    res.json({
+      totalServices,
+      currentPage: page,
+      totalPages,
+      services,
+    });
   } catch (error) {
     console.log(error);
   }
