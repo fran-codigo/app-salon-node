@@ -22,7 +22,7 @@ const getUserAppointments = async (req, res) => {
     const appointments = await Appointment.find(query)
       .populate('services')
       .populate({ path: 'user', select: 'name email' })
-      .sort({ date: 'asc' });
+      .sort({ date: 'asc', time: 'asc' });
 
     res.json(appointments);
   } catch (error) {
