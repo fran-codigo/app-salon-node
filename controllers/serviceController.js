@@ -22,23 +22,32 @@ const createService = async (req, res) => {
 };
 
 const getServices = async (req, res) => {
-  const { page = 1, limit = 6 } = req.query;
+  const { page, limit } = req.query;
 
   try {
     const totalServices = await Service.countDocuments();
-    const totalPages = Math.ceil(totalServices / limit);
+    let services;
 
-    const services = await Service.find()
-      .limit(limit * 1)
-      .skip((page - 1) * limit)
-      .exec();
+    if (page && limit) {
+      const totalPages = Math.ceil(totalServices / limit);
+      services = await Service.find()
+        .limit(limit * 1)
+        .skip((page - 1) * limit);
 
-    res.json({
-      totalServices,
-      currentPage: page,
-      totalPages,
-      services,
-    });
+      res.json({
+        totalServices,
+        currentPage: page,
+        totalPages,
+        services,
+      });
+    } else {
+      services = await Service.find();
+
+      res.json({
+        services,
+        totalServices,
+      });
+    }
   } catch (error) {
     console.log(error);
   }
