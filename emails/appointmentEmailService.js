@@ -74,14 +74,26 @@ export async function sendEmailCancelAppointment({ date, time }) {
     process.env.EMAIL_PASS
   );
 
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = path.dirname(__filename);
+
+  const templatePath = path.join(
+    __dirname,
+    '../emails/templates',
+    'emailCancelAppointment.html'
+  );
+
+  let html = readFileSync(templatePath, 'utf-8');
+
+  html = html.replace('{{date}}', date);
+  html = html.replace('{{time}}', time);
+
   const info = await transporter.sendMail({
     from: 'AppSalon <citas@appsalon.com>',
     to: 'admin@appsalon',
     subject: 'AppSalon - Cita Cancelada',
     text: 'AppSalon - Cita Cancelada',
-    html: `<p>Hola: Admin Una cita ha sido Cancelada</p>
-    <p>La cita del dia ${date} a las ${time} ha sido Cancelada</p>
-    `,
+    html,
   });
 
   console.log('Mensaje enviado', info.messageId);
