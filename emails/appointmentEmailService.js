@@ -1,3 +1,7 @@
+import {readFileSync} from 'fs'
+import { fileURLToPath } from 'url';
+import path from 'path';
+
 import { createTransport } from '../config/nodemailer.js';
 
 export async function sendEmailNewAppointment({ date, time }) {
@@ -8,14 +12,26 @@ export async function sendEmailNewAppointment({ date, time }) {
     process.env.EMAIL_PASS
   );
 
+  const __filename = fileURLToPath(import.meta.url)
+  const __dirname = path.dirname(__filename)
+
+  const templatePath = path.join(
+    __dirname,
+    '../emails/templates',
+    'emailNewAppointment.html'
+  );
+
+  let html = readFileSync(templatePath, 'utf-8');
+
+  html = html.replace('{{date}}', date);
+  html = html.replace('{{time}}', time);
+
   const info = await transporter.sendMail({
     from: 'AppSalon <citas@appsalon.com>',
     to: 'admin@appsalon',
     subject: 'AppSalon - Nueva Cita',
     text: 'AppSalon - Nueva Cita',
-    html: `<p>Hola: Admin tienes una nueva cita</p>
-    <p>La cita será el dia ${date} a las ${time}</p>
-    `,
+    html,
   });
 
   console.log('Mensaje enviado', info.messageId);
